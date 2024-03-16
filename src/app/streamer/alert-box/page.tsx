@@ -1,9 +1,27 @@
 "use client";
-import { Button, Form, Input, Select } from "antd";
+import { Button, Form, Input, Modal, Select, Upload } from "antd";
 import { Option } from "antd/es/mentions";
-import React from "react";
+import React, { useState } from "react";
+import { UploadOutlined } from "@ant-design/icons";
+import { GIF } from "@/data/gif.data";
+import Image from "next/image";
+import { dev_base_url, img_base_url } from "@/constants/baseurl";
+const Page = () => {
+  // modal
+  const [image, setImage] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-const page = async () => {
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const onFinish = () => {};
   return (
     <div>
@@ -25,7 +43,7 @@ const page = async () => {
         <Form
           onFinish={onFinish}
           layout="vertical"
-          className="grid grid-cols-2 gap-4"
+          className="grid grid-cols-2 gap-4 p-12"
         >
           <Form.Item
             label="Message Template"
@@ -49,29 +67,77 @@ const page = async () => {
           <Form.Item
             label="Text Animation"
             name="textAnimation"
-            className="font-manrope font-semibold h-[48px] text-[13px] col-span-1"
-            rules={[
-              { required: true, message: "Please enter your full name!" },
-            ]}
-          >
-            <Select placeholder="Full Name" className="py-2 h-[48px]">
-              <Option value="">{}</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="Full Name"
-            name="fullName"
             className="font-manrope font-semibold text-[13px] col-span-1"
             rules={[
               { required: true, message: "Please enter your full name!" },
             ]}
           >
-            <Input placeholder="Full Name" className="py-2" />
+            <Select placeholder="Text Animation" className="w-[100%] h-[41px]">
+              <Option value="">Fade</Option>
+              <Option value="">Fade</Option>
+              <Option value="">Fade</Option>
+              <Option value="">Fade</Option>
+              <Option value="">Fade</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Image"
+            name="image"
+            className="font-manrope font-semibold text-[13px] col-span-1"
+            rules={[{ required: true, message: "Please Upload Image" }]}
+          >
+            <div
+              onClick={() => {
+                showModal();
+              }}
+            >
+              <div className="w-full">
+                <Button icon={<UploadOutlined />}>Upload</Button>
+              </div>
+            </div>
           </Form.Item>
         </Form>
       </div>
+
+      <Modal
+        footer={false}
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        width={600}
+      >
+        <div>
+          <div className="flex justify-between items-center flex-wrap">
+            {GIF.map((item, id) => {
+              return (
+                <div
+                  onClick={() => {
+                    setImage(item);
+                    handleCancel();
+                  }}
+                  className="bg-gray-500 rounded-xl hover:shadow-lg hover:cursor-pointer"
+                  key={id}
+                >
+                  <img
+                    src={img_base_url + item}
+                    alt={"gif"}
+                    key={item}
+                    width={100}
+                    height={100}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex justify-end">
+            <Upload className="w-full">
+              <Button icon={<UploadOutlined />}>Upload Yours</Button>
+            </Upload>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
 
-export default page;
+export default Page;
