@@ -42,7 +42,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         } px-12 text-center text-[14px] flex gap-1 [&>*]:my-auto mx-[24px] text-md  py-3 border-b-[1px] border-b-white/10 `}
       >
         <div
-          className={` text-xl flex items-center justify-center [&>*]:mx-auto w-[30px]`}
+          className={` text-xl flex items-center justify-between [&>*]:mx-auto w-[30px]`}
         >
           {icon}
         </div>

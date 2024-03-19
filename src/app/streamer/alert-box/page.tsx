@@ -8,6 +8,7 @@ import {
   Select,
   Slider,
   Upload,
+  message,
   notification,
 } from "antd";
 import { Option } from "antd/es/mentions";
@@ -96,7 +97,7 @@ const Page = () => {
         path: image,
       },
       audio: {
-        url: "http://localhost:8000/assets/audio.ogg",
+        url: "https://stream-alert-backend.onrender.com/assets/audio.ogg",
       },
       animation: true,
       custom: {
@@ -121,6 +122,9 @@ const Page = () => {
       const responseData = await response.json();
       setTemplateUrl(responseData.data);
       handleOk();
+      notification.success({
+        message: "Template created successfully",
+      });
       console.log("File uploaded successfully:", responseData);
       // Handle success
     } catch (error: any) {
@@ -136,11 +140,42 @@ const Page = () => {
     navigator.clipboard
       .writeText(templateUrl)
       .then(() => {
-        alert("Copied: " + templateUrl);
+        message.info("Copied to clipboard");
       })
       .catch((error) => {
         console.error("Failed to copy:", error);
       });
+  };
+
+  const onTestAlert = async () => {
+    const requestBody = {
+      streamer: "65f4990be1fdb4b19e3b7c2f",
+      message: "kill chicken dinner",
+      amount: "900000",
+      fullName: "Bipin Giri",
+    };
+    try {
+      const response = await fetch(dev_base_url + "/alerts/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        } as HeadersInit,
+        body: JSON.stringify(requestBody),
+      });
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+      const responseData = await response.json();
+      console.log("File uploaded successfully:", responseData);
+      // Handle success
+    } catch (error: any) {
+      console.error("Error uploading file:", error.message);
+      // Handle error
+      notification.error({
+        message: "Something went wrong uploading gif",
+      });
+    }
   };
   return (
     <div>
@@ -148,7 +183,7 @@ const Page = () => {
         <div className="flex items-center justify-around">
           <h1 className="text-3xl font-bold">Alert Box</h1>
           <div className="flex gap-4 items-center">
-            <div className="w-[400px] h-[41px] bg-gray-200 p-2 rounded ">
+            <div className="w-[400px] h-[41px] bg-gray-200 p-2 rounded text-wrap ">
               {templateUrl}
             </div>
 
@@ -160,7 +195,11 @@ const Page = () => {
               >
                 Copy
               </Button>
-              <Button size="large" className="bg-primary-2">
+              <Button
+                onClick={onTestAlert}
+                size="large"
+                className="bg-primary-2"
+              >
                 Test
               </Button>
             </div>
